@@ -7,14 +7,14 @@ GCP (GKE) Setup
 ************************************************
 Flyte Deployment - Manual GCE/GKE Deployment
 ************************************************
-This guide helps you set up Flyte from scratch, on GCE, without using an automated approach. It details step-by-step how to go from a bare GCE account, to a fully functioning Flyte deployment that members of your company can use.
+This guide helps you set up Flyte from scratch, on GCE, without using an automated approach. It details step-by-step instructions to go from a bare GCE account to a fully functioning Flyte deployment that members of your company can use.
 
 Prerequisites
 =============
 * Access to `GCE console <https://console.cloud.google.com/>`__
 * A domain name for the Flyte installation like flyte.example.org that allows you to set a DNS A record.
 
-Before you begin, please ensure that you have the following tools installed.
+Before you begin, please ensure that you have the following tools installed:
 
 * ``gcloud``
 * Helm
@@ -22,7 +22,7 @@ Before you begin, please ensure that you have the following tools installed.
 
 Initialize Gcloud
 ===================
-Authorize Gcloud sdk to access GCP using your credentials and also additionally setup the config for existing project
+Authorize Gcloud sdk to access GCP using your credentials, setup the config for the existing project,
 and optionally set the default compute zone. `Init <https://cloud.google.com/sdk/gcloud/reference/init>`__
 
 .. code-block::
@@ -32,7 +32,7 @@ and optionally set the default compute zone. `Init <https://cloud.google.com/sdk
 
 Create Organization
 ===================
-Use the following docs to understand the organization creation process in google cloud
+Use the following docs to understand the organization creation process in Google cloud
 `Organization Management <https://cloud.google.com/resource-manager/docs/creating-managing-organization>`__
 
 Get the organization id to be used for creating the project. The billing should be linked with the organization so
@@ -63,19 +63,19 @@ Create GCE Project
 
 Of course you can also use an existing project if your account has appropriate permissions to create the required resources.
 
-Set project <my-project> as default in gcloud or use gcloud init to set this default:
+Set project <my-project> as the default in gcloud or use gcloud init to set this default:
 
 .. code-block::
 
   gcloud config set project ${PROJECT-ID}
 
-We assume that for the <my-project> has been set as default for all gcloud commands below.
+We assume that <my-project> has been set as default for all gcloud commands below.
 
 Permissions
 ===========
 
-Configure `workload identity <https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity>`__ for flyte namespace service accounts.
-This creates the GSA's which would be used as mapped to the KSA(kubernetes service account) through annotations and would be used for authorizing the pods access to the google cloud services.
+Configure `workload identity <https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity>`__ for Flyte namespace service accounts.
+This creates the GSA's which would be mapped to the KSA(kubernetes service account) through annotations and used for authorizing the pods access to the Google cloud services.
 
 * Create GSA for flyteadmin
 
@@ -103,9 +103,9 @@ This creates the GSA's which would be used as mapped to the KSA(kubernetes servi
   gcloud iam service-accounts create flyte-clusterresources
 
 
-* Create a new customized role enveloping `storage.buckets.get` with name StorageBucketGet which will be used while adding roles
+* Create a new customized role enveloping `storage.buckets.get` with name StorageBucketGet which will be used while adding roles.
 
-* Add IAM policy binding for flyteadmin GSA. It requires permissions to get bucket, create/delete/update objects in the bucket, connecting to cloud sql and also workload identity user role.
+* Add IAM policy binding for flyteadmin GSA. It requires permissions to get the bucket, create/delete/update objects in the bucket, connecting to cloud sql and also workload identity user role.
 
 .. code-block::
 
@@ -117,7 +117,7 @@ This creates the GSA's which would be used as mapped to the KSA(kubernetes servi
     --member "serviceAccount:${PROJECT-ID}.svc.id.goog[flyte/flyteadmin]" \
     gsa-flyteadmin@${PROJECT-ID}.iam.gserviceaccount.com
 
-* Add IAM policy binding for datacatalog GSA.It requires permissions to get bucket, create/delete/update objects in the bucket, connecting to cloud sql and also workload identity user role.
+* Add IAM policy binding for datacatalog GSA. It requires permissions to get the bucket, create/delete/update objects in the bucket, connecting to cloud sql and also workload identity user role.
 
 .. code-block::
 
@@ -129,7 +129,7 @@ This creates the GSA's which would be used as mapped to the KSA(kubernetes servi
     --member "serviceAccount:${PROJECT-ID}.svc.id.goog[flyte/datacatalog]" \
     gsa-datacatalog@${PROJECT-ID}.iam.gserviceaccount.com
 
-* Add IAM policy binding for flytepropeller GSA.It requires permissions to get bucket, create/delete/update objects in the bucket, create/update/delete kubernetes objects in the cluster and also workload identity user role.
+* Add IAM policy binding for flytepropeller GSA. It requires permissions to get the bucket, create/delete/update objects in the bucket, create/update/delete kubernetes objects in the cluster and also workload identity user role.
 
 .. code-block::
 
@@ -141,7 +141,7 @@ This creates the GSA's which would be used as mapped to the KSA(kubernetes servi
     --member "serviceAccount:${PROJECT-ID}.svc.id.goog[flyte/flytepropeller]" \
     gsa-flytepropeller@${PROJECT-ID}.iam.gserviceaccount.com
 
-* Add IAM policy binding for cluster resource manager GSA.It requires permissions to get bucket, create/delete/update objects in the bucket and also workload identity user role.
+* Add IAM policy binding for cluster resource manager GSA. It requires permissions to get the bucket, create/delete/update objects in the bucket and also workload identity user role.
 
 .. code-block::
 
@@ -155,13 +155,13 @@ This creates the GSA's which would be used as mapped to the KSA(kubernetes servi
 
 Create GKE Cluster
 ==================
-Creates GKE cluster with VPC-native networking and workload identity enabled.
+Create GKE cluster with VPC-native networking and workload identity enabled.
 Browse to the gcloud console and Kubernetes Engine tab to start creating the k8s cluster.
 
-Ensure that VPC native traffic routing is enabled and under Security enable Workload identity and use project default pool
+Ensure that VPC native traffic routing is enabled under Security enable Workload identity and use project default pool
 which would be `${PROJECT-ID}.svc.id.goog`
 
-Recommended way is to create it from the console.
+The recommended way is to create it from the console.
 
 .. code-block::
 
@@ -172,7 +172,7 @@ Recommended way is to create it from the console.
 
 Create GKE context
 ==================
-Initialize your kubecontext to point to GKE cluster using the following command.
+Initialize your kubecontext to point to GKE cluster using the following command:
 
 .. code-block::
 
@@ -186,15 +186,15 @@ Verify by creating a test namespace
 
 Create Cloud SQL Database
 =========================
-Next create a relational `Cloud SQL for PostgreSQL <https://cloud.google.com/sql/docs/postgres/introduction>`__ database. This database will be used by both the primary control plane service (Flyte Admin) and the Flyte memoization service (Data Catalog).
-Follow this `link <https://console.cloud.google.com/sql/choose-instance-engine>`__ to create the cloud sql instance
+Next, create a relational `Cloud SQL for PostgreSQL <https://cloud.google.com/sql/docs/postgres/introduction>`__ database. This database will be used by both the primary control plane service (Flyte Admin) and the Flyte memoization service (Data Catalog).
+Follow this `link <https://console.cloud.google.com/sql/choose-instance-engine>`__ to create the cloud sql instance.
 
 * Select PostgreSQL
 * Provide an Instance ID
 * Provide password for the instance <DB_INSTANCE_PASSWD>
 * Use PostgresSQL13 or higher
 * Select the Zone based on your availability requirements.
-* Select customize your instance and enable Private IP in Connections tab. This is required for the private communication between the GKE apps and cloud SQL instance. Follow the steps to create the private connection (default)
+* Select customize your instance and enable Private IP in Connections tab. This is required for the private communication between the GKE apps and cloud SQL instance. Follow the steps to create the private connection (default).
 * Create the SQL instance
 * After creation of the instance get the private IP of the database <CLOUD-SQL-IP>
 * Create flyteadmin database and flyteadmin user account on that instance with <DBPASSWORD>
@@ -211,7 +211,7 @@ Follow this `link <https://console.cloud.google.com/sql/choose-instance-engine>`
 
       kubectl run pgsql-postgresql-client --rm --tty -i --restart='Never' --namespace testdb --image docker.io/bitnami/postgresql:11.7.0-debian-10-r9 --env="PGPASSWORD=<DBPASSWORD>" --command -- psql testdb --host <CLOUD-SQL-IP> -U flyteadmin -d flyteadmin -p 5432
 
-Recommended way is to create it from the console.
+The recommended way is to create it from the console.
 
 .. code-block:: bash
 
@@ -244,7 +244,7 @@ Then apply it to your cluster:
 
   kubectl apply -f flyte-certificate.yaml
 
-Alternative is to use certificate manager
+An alternative is to use the certificate manager:
 
 * Install the cert manager
 
@@ -320,7 +320,7 @@ Installing Flyte
    <CLOUD-SQL-IP> private IP of cloud sql instance
    <DBPASSWORD> of the flyteadmin user created for the cloud sql instance
    <BUCKETNAME> of the GCS bucket created
-   <HOSTNAME> DNS name of the flyte deployment
+   <HOSTNAME> DNS name of the Flyte deployment
 
 #. Update helm dependencies
 
@@ -367,7 +367,7 @@ Upgrading Flyte
 Connecting to Flyte
 ===================
 
-Flyte can be accessed using the UI console or your terminal
+Flyte can be accessed using the UI console or your terminal.
 
 * First, find the Flyte endpoint created by the GKE ingress controller.
 
@@ -409,13 +409,13 @@ Accessing Flyte Console (web UI)
 ================================
 
 * Use the https://<FLYTE-ENDPOINT>/console to get access to flyteconsole UI
-* Ignore the certificate error if using a self signed cert
+* Ignore the certificate error if using a self-signed cert
 
 Troubleshooting
 ===============
 
 
-* If flyteadmin pod is not coming up, then describe the pod and check which of the container or init-containers had an error.
+* If the flyteadmin pod is not coming up, then describe the pod and check which container or init-containers had an error.
 
 .. code-block:: bash
 
@@ -430,11 +430,11 @@ eg: to check for run-migrations init container do this.
 
 
 * Increasing log level for flytectl
-  Change your logger config to this
+  Change your logger config to this:
   .. code-block::
 
      logger:
      show-source: true
      level: 6
 
-* In case you get new ingress IP for your flyte deployment, you would need to flush DNS cache using `this <https://developers.google.com/speed/public-dns/cache>`__
+* In case you have a new ingress IP for your Flyte deployment, you would need to flush DNS cache using `this <https://developers.google.com/speed/public-dns/cache>`__
